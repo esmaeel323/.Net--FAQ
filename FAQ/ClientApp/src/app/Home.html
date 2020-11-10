@@ -1,0 +1,143 @@
+<header>
+  <nav class="navbar navbar-dark py-0 bg-dark navbar-expand-lg">
+    <a class="navbar-brand"><img src="./assets/Images/Logo.PNG" style="height:40px; width:75px;"></a>
+    <button class="navbar-toggler mt-1" type="button" data-toggle="collapse" data-target="#navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fa fa-bars"></i>
+    </button>
+    <div class="navbar-collapse collapse flex-sm-row-reverse">
+      <ul class="navbar-nav">
+        <li class="nav-item "><a href="#Hjem" class="nav-link">Hjem</a></li>
+        <li class="nav-item "><a href="#Logg Inn" class="nav-link">Logg Inn</a></li>
+        <li class="active "><a href="#FAQ" class="nav-link">FAQ</a></li>
+        <li class="nav-item "><a href="#Kontakt" class="nav-link">kontakt</a></li>
+
+      </ul>
+    </div>
+  </nav>
+</header>
+
+
+<div class="container" id="container">
+
+  <div class="row">
+    <div class="col-md-3" id="tabs">
+      <div class="nav nav-tabs flex-column" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link" id="Strekning-tab" (click)='visFAQ()' data-toggle="tab" href="#Strekning" role="tab" aria-selected="false">Generelle FAQ</a>
+        <a class="nav-item nav-link" id="Avgang-tab" (click)='visAvgangFAQ()' data-toggle="tab" href="#Avgang" role="tab" aria-selected="false">Avgang/Strekinig FAQ</a>
+        <a class="nav-item nav-link" id="Regis-tab" (click)='registrerFAQs()' data-toggle="tab" href="#Regis" role="tab" aria-selected="false">Registrer Ny Spørsmål</a>
+      </div>
+    </div>
+
+
+    <!-- /.col-md-4 -->
+    <div class="col-md-8">
+      <div class="tab-content" id="myTabContent">
+        <div role="tabpanel" *ngIf="ShowFAQList">
+          <div class="card">
+            <div class="card-header" *ngFor='let value of allFAQs'>
+              <h6>
+                <button class=" btn btn-link" type="button" (click)="hentSvar(value.id)">{{value.question}}</button>
+              </h6>
+            </div>
+            <div role="tabpanel" *ngIf="ShowAnswerList">
+              <div class="card-body" *ngFor='let value of answer'>
+                {{value.answer}}
+                <div>
+                  <button type="button" class="btn btn-success fas fa-thumbs-up" (click)="like(value.id); hentSvar(value.id)"> {{value.like}}</button>
+                  <button type="button" class="btn btn-danger fas fa-thumbs-down" (click)="dislike(value.id); hentSvar(value.id)"> {{value.dislike}}</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+      <div class="tab-content col-md-8">
+        <div role="tabpanel" *ngIf="Home">
+          <div class="card-body">
+            <div>
+              <h5>
+                Hei. Velkommen til Vy FAQ<br />
+                Velg mellom Generelleog Strekning/Avgang eller registrer et nytt spørsmål
+              </h5>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+
+      <div class="tab-content">
+        <div role="tabpanel" *ngIf="ShowAvgSTKFAQList">
+          <div class="card">
+            <div class="card-header" *ngFor='let value of allAvgSTK'>
+              <h6>
+                <button class="btn btn-link" type="button" (click)="hentSvar(value.id)">{{value.question}}</button>
+              </h6>
+            </div>
+            <div role="tabpanel" *ngIf="ShowAnswerList">
+              <div class="card-body" *ngFor='let value of answer'>
+                {{value.answer}}
+                <div>
+                  <button type="button" class="btn btn-success fas fa-thumbs-up" (click)="Like(value.id); hentSvar(value.id)"> {{value.like}}</button>
+                  <button type="button" class="btn btn-danger fas fa-thumbs-down" (click)="Dislike(value.id);  hentSvar(value.id)"> {{value.dislike}}</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="Registrert" *ngIf="Registrert">
+        <h4>Takk for spørsålen. Du vil få svar så snart vi kan.</h4>
+        <button class="btn btn-primary" (click)="Tilbake()">Tilbake</button>
+      </div>
+
+
+
+      <div>
+        <div div class="col-md-10">
+          <div role="tabpanel" *ngIf="ShowSkjema">
+            <form [formGroup]="skjema" (ngSubmit)="vedSubmit()">
+              <input class="form-control" formControlName="id" type="hidden" />
+              <div class="form-group">
+                <label>Navn</label>
+                <input class="form-control" formControlName="navn" placeholder="Ali Hansen" />
+                <p class="alert alert-warning" [hidden]="skjema.controls.navn.valid || (skjema.controls.navn.pristine && !submitted)">
+                  Skriv Navn
+                </p>
+              </div>
+
+              <div class="form-group">
+                <label>E-post</label>
+                <input class="form-control" formControlName="epost" placeholder="ali323@gmail.com" />
+                <p class="alert alert-warning" [hidden]="skjema.controls.epost.valid || (skjema.controls.epost.pristine && !submitted)">
+                  Eks. Ali323@gmail.com
+                </p>
+              </div>
+
+              <div class="form-group">
+                <label>Spørsmål</label>
+                <textarea class="form-control" rows="3" formControlName="question" placeholder="Skriv inn spørsmålet"></textarea>
+                <p class="alert alert-warning" [hidden]="skjema.controls.question.valid || (skjema.controls.question.pristine && !submitted)">
+                  Skriv Spørsmål (Maks 100 bokstav)
+                </p>
+              </div>
+              <div class="form-group">
+                <button type="submit" *ngIf="skjemaStatus=='Registrer'" [disabled]="!skjema.valid" class="btn btn-success">Registrer</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
